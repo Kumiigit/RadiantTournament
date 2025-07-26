@@ -243,11 +243,19 @@ function App() {
   
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-400 mx-auto mb-4"></div>
-          <div className="text-white text-lg">
+          <div className="relative mb-8">
+            <div className="loading-spinner w-16 h-16 mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Trophy className="h-6 w-6 text-primary-500 animate-pulse-soft" />
+            </div>
+          </div>
+          <div className="text-white text-xl font-medium mb-2">
             {authLoading ? 'Initializing...' : 'Loading tournaments...'}
+          </div>
+          <div className="text-secondary-400 text-sm">
+            Setting up your tournament experience
           </div>
         </div>
       </div>
@@ -255,7 +263,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-secondary-950">
       <AuthGuard user={user} onAuthSuccess={handleAuthSuccess}>
         <Header 
           currentView={currentView} 

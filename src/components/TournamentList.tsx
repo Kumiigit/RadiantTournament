@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, Star, Trophy, Users, Calendar } from 'lucide-react';
 import { Tournament } from '../types/tournament';
 import TournamentCard from './TournamentCard';
 
@@ -29,26 +29,72 @@ export default function TournamentList({ tournaments, onJoinTournament, onViewTo
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-4">Valorant Tournaments</h1>
+      {/* Hero Section */}
+      <div className="mb-12">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-white mb-4">
+            Professional <span className="text-gradient">Valorant</span> Tournaments
+          </h1>
+          <p className="text-xl text-secondary-300 max-w-3xl mx-auto leading-relaxed">
+            Compete in high-quality tournaments with advanced bracket systems, real-time statistics, and professional-grade tournament management.
+          </p>
+        </div>
         
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* Stats Bar */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="card text-center p-6">
+            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <Trophy className="h-6 w-6 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">{tournaments.length}</div>
+            <div className="text-sm text-secondary-400">Active Tournaments</div>
+          </div>
+          <div className="card text-center p-6">
+            <div className="w-12 h-12 bg-success-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <Users className="h-6 w-6 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {tournaments.reduce((acc, t) => acc + t.teams.length, 0)}
+            </div>
+            <div className="text-sm text-secondary-400">Registered Teams</div>
+          </div>
+          <div className="card text-center p-6">
+            <div className="w-12 h-12 bg-warning-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <Star className="h-6 w-6 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">{featuredTournaments.length}</div>
+            <div className="text-sm text-secondary-400">Featured Events</div>
+          </div>
+          <div className="card text-center p-6">
+            <div className="w-12 h-12 bg-error-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <Calendar className="h-6 w-6 text-white" />
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {tournaments.filter(t => t.status === 'ongoing').length}
+            </div>
+            <div className="text-sm text-secondary-400">Live Now</div>
+          </div>
+        </div>
+        
+        {/* Search and Filters */}
+        <div className="card p-6">
+          <div className="flex flex-col lg:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-secondary-400" />
             <input
               type="text"
               placeholder="Search tournaments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-primary-400 focus:outline-none"
+              className="input pl-12"
             />
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-primary-400 focus:outline-none"
+              className="select min-w-[140px]"
             >
               <option value="all">All Status</option>
               <option value="registration">Registration Open</option>
@@ -60,7 +106,7 @@ export default function TournamentList({ tournaments, onJoinTournament, onViewTo
             <select
               value={regionFilter}
               onChange={(e) => setRegionFilter(e.target.value)}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-primary-400 focus:outline-none"
+              className="select min-w-[140px]"
             >
               <option value="all">All Regions</option>
               <option value="NA">North America</option>
@@ -70,16 +116,18 @@ export default function TournamentList({ tournaments, onJoinTournament, onViewTo
             </select>
           </div>
         </div>
+        </div>
       </div>
 
       {featuredTournaments.length > 0 && (
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            <Star className="h-6 w-6 text-warning-500 mr-3" />
+            <span className="text-gradient">
               Featured Tournaments
             </span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {featuredTournaments.map(tournament => (
               <TournamentCard
                 key={tournament.id}
@@ -95,7 +143,7 @@ export default function TournamentList({ tournaments, onJoinTournament, onViewTo
       <div>
         <h2 className="text-2xl font-bold text-white mb-6">All Tournaments</h2>
         {regularTournaments.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {regularTournaments.map(tournament => (
               <TournamentCard
                 key={tournament.id}
@@ -106,9 +154,12 @@ export default function TournamentList({ tournaments, onJoinTournament, onViewTo
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-lg">No tournaments found matching your criteria</div>
-            <div className="text-gray-500 text-sm mt-2">Try adjusting your filters or search query</div>
+          <div className="card text-center py-16">
+            <div className="w-16 h-16 bg-secondary-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Search className="h-8 w-8 text-secondary-400" />
+            </div>
+            <div className="text-secondary-300 text-lg font-medium mb-2">No tournaments found</div>
+            <div className="text-secondary-400 text-sm">Try adjusting your filters or search query</div>
           </div>
         )}
       </div>

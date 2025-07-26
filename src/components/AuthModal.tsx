@@ -167,9 +167,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-gray-800 rounded-xl border border-gray-700 max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-700">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className="card max-w-md w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+        <div className="p-6 border-b border-secondary-700">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">
               {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Admin Login'}
@@ -177,7 +177,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
             {onClose && (
               <button 
                 onClick={onClose}
-                className="text-gray-400 hover:text-white transition-colors text-2xl"
+                className="text-secondary-400 hover:text-white transition-colors p-1 hover:bg-secondary-800 rounded-lg"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -190,10 +190,10 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           <div className="flex space-x-2 mb-6">
             <button
               onClick={() => handleModeChange('login')}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                 mode === 'login'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'btn-primary'
+                  : 'btn-secondary'
               }`}
             >
               <User className="h-4 w-4 inline mr-2" />
@@ -201,20 +201,20 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
             </button>
             <button
               onClick={() => handleModeChange('signup')}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                 mode === 'signup'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'btn-primary'
+                  : 'btn-secondary'
               }`}
             >
               Sign Up
             </button>
             <button
               onClick={() => handleModeChange('admin')}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                 mode === 'admin'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'btn-primary'
+                  : 'btn-secondary'
               }`}
             >
               <Shield className="h-4 w-4 inline mr-2" />
@@ -224,12 +224,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
 
           {/* Error/Success Messages */}
           {error && (
-            <div className="mb-4 p-3 bg-red-900 border border-red-700 rounded-lg flex items-center space-x-2">
-              <AlertCircle className="h-4 w-4 text-red-400" />
-              <div className="text-red-200 text-sm">
+            <div className="mb-4 p-4 bg-error-900/50 border border-error-700 rounded-xl flex items-center space-x-3 animate-slide-up">
+              <AlertCircle className="h-5 w-5 text-error-400 flex-shrink-0" />
+              <div className="text-error-200 text-sm">
                 <div>{error}</div>
                 {error.includes('Database not configured') && (
-                  <div className="mt-2 text-xs text-red-300">
+                  <div className="mt-2 text-xs text-error-300">
                     Running in demo mode. Set up Supabase credentials for full functionality.
                   </div>
                 )}
@@ -238,9 +238,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           )}
 
           {success && (
-            <div className="mb-4 p-3 bg-green-900 border border-green-700 rounded-lg flex items-center space-x-2">
-              <CheckCircle className="h-4 w-4 text-green-400" />
-              <span className="text-green-200 text-sm">{success}</span>
+            <div className="mb-4 p-4 bg-success-900/50 border border-success-700 rounded-xl flex items-center space-x-3 animate-slide-up">
+              <CheckCircle className="h-5 w-5 text-success-400" />
+              <span className="text-success-200 text-sm">{success}</span>
             </div>
           )}
 
@@ -248,7 +248,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           {mode === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-secondary-300 mb-2">
                   Email
                 </label>
                 <input
@@ -257,13 +257,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-400 focus:outline-none"
+                  className="input"
                   placeholder="Enter your email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-secondary-300 mb-2">
                   Password
                 </label>
                 <input
@@ -272,7 +272,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-400 focus:outline-none"
+                  className="input"
                   placeholder="Enter your password"
                 />
               </div>
@@ -280,9 +280,16 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-3 bg-primary-600 hover:bg-primary-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+                className="w-full btn-primary"
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? (
+                  <>
+                    <div className="loading-spinner w-4 h-4 mr-2"></div>
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </button>
             </form>
           )}
