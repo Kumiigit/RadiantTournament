@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Users, Trophy, MapPin, FileText, DollarSign, Plus, X, ExternalLink } from 'lucide-react';
 import { Tournament } from '../types/tournament';
 import { AuthUser } from '../types/auth';
+import StageSelector from './StageSelector';
 
 interface CreateTournamentProps {
   onCreateTournament: (tournament: Omit<Tournament, 'id' | 'teams' | 'matches' | 'bracket'>) => void;
@@ -14,6 +15,7 @@ export default function CreateTournament({ onCreateTournament, user, onAuthRequi
     name: '',
     description: '',
     format: 'single-elimination' as Tournament['format'],
+    stages: 1 as Tournament['stages'],
     maxTeams: 16,
     teamSize: 5,
     prizePool: '',
@@ -54,6 +56,7 @@ export default function CreateTournament({ onCreateTournament, user, onAuthRequi
       description: formData.description,
       game: 'Valorant',
       format: formData.format,
+      stages: formData.stages,
       maxTeams: formData.maxTeams,
       teamSize: formData.teamSize,
       prizePool: formData.prizePool || undefined,
@@ -247,6 +250,15 @@ export default function CreateTournament({ onCreateTournament, user, onAuthRequi
                 className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:border-primary-400 focus:outline-none"
               />
             </div>
+          </div>
+
+          {/* Tournament Stages */}
+          <div>
+            <StageSelector
+              value={formData.stages}
+              onChange={(stages) => setFormData(prev => ({ ...prev, stages }))}
+              required
+            />
           </div>
 
           {/* Prize and Entry */}

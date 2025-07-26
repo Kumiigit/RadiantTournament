@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { AuthUser } from './types/auth';
 import { AuthService } from './services/authService';
+import AuthGuard from './components/AuthGuard';
 import AuthModal from './components/AuthModal';
 import UserProfile from './components/UserProfile';
 import Header from './components/Header';
@@ -23,6 +24,7 @@ function App() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
+  const [sessionTimeout, setSessionTimeout] = useState<NodeJS.Timeout | null>(null);
   
   useEffect(() => {
     initializeAuth();
@@ -37,11 +39,38 @@ function App() {
       // Set up auth state listener
       AuthService.onAuthStateChange((user) => {
         setUser(user);
+        if (user) {
+          setupSessionTimeout();
+        } else {
+          clearSessionTimeout();
+        }
       });
     } catch (error) {
       console.error('Auth initialization failed:', error);
     } finally {
       setAuthLoading(false);
+    }
+  };
+  
+  const setupSessionTimeout = () => {
+    // Clear existing timeout
+    if (sessionTimeout) {
+      clearTimeout(sessionTimeout);
+    }
+    
+    // Set 30-minute session timeout
+    const timeout = setTimeout(() => {
+      handleLogout();
+      alert('Your session has expired. Please sign in again.');
+    }, 30 * 60 * 1000); // 30 minutes
+    
+    setSessionTimeout(timeout);
+  };
+  
+  const clearSessionTimeout = () => {
+    if (sessionTimeout) {
+      clearTimeout(sessionTimeout);
+      setSessionTimeout(null);
     }
   };
   
@@ -87,11 +116,13 @@ function App() {
   const handleAuthSuccess = (authUser: AuthUser) => {
     setUser(authUser);
     setShowAuthModal(false);
+    setupSessionTimeout();
   };
 
   const handleLogout = async () => {
     try {
       await AuthService.signOut();
+      clearSessionTimeout();
       setUser(null);
       setCurrentView('tournaments');
     } catch (error) {
@@ -225,79 +256,66 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <Header 
-        currentView={currentView} 
-        setCurrentView={setCurrentView}
-        user={user}
-        onAuthClick={() => setShowAuthModal(true)}
-        onLogout={handleLogout}
-      />
-      
-      <main>
-        {currentView === 'tournaments' && (
-          <TournamentList
-            tournaments={tournaments}
-            onJoinTournament={handleJoinTournament}
-            onViewTournament={handleViewTournament}
-          />
-        )}
-        
-        {currentView === 'create' && (
-          <CreateTournament 
-            onCreateTournament={handleCreateTournament} 
-            user={user}
-            onAuthRequired={() => setShowAuthModal(true)}
-          />
-        )}
-        
-        {currentView === 'detail' && selectedTournament && (
-          <TournamentDetail
-            tournament={selectedTournament}
-            user={user}
-            onBack={handleBackToTournaments}
-            onJoin={handleJoinTournament}
-            onUpdate={handleUpdateTournament}
-            onDelete={handleDeleteTournament}
-          />
-        )}
-        
-        {currentView === 'profile' && (
-          user ? (
-            <UserProfile user={user} onProfileUpdate={handleProfileUpdate} />
-          ) : (
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 text-center">
-                <h1 className="text-3xl font-bold text-white mb-4">Sign In Required</h1>
-                <p className="text-gray-400 mb-6">You need to sign in to view your profile.</p>
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-lg transition-colors font-medium"
-                >
-                  Sign In
-                </button>
-              </div>
-            </div>
-          )
-        )}
-      </main>
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        onAuthSuccess={handleAuthSuccess}
-      />
-
-      {showRegistration && selectedTournament && (
-        <PlayerRegistration
-          tournament={selectedTournament}
-          onRegister={handleRegisterTeam}
-          onClose={() => {
-            setShowRegistration(false);
-            setSelectedTournament(null);
-          }}
+      <AuthGuard user={user} onAuthSuccess={handleAuthSuccess}>
+        <Header 
+          currentView={currentView} 
+          setCurrentView={setCurrentView}
+          user={user}
+          onAuthClick={() => setShowAuthModal(true)}
+          onLogout={handleLogout}
         />
-      )}
+        
+        <main>
+          {currentView === 'tournaments' && (
+            <TournamentList
+              tournaments={tournaments}
+              onJoinTournament={handleJoinTournament}
+              onViewTournament={handleViewTournament}
+            />
+          )}
+          
+          {currentView === 'create' && (
+            <CreateTournament 
+              onCreateTournament={handleCreateTournament} 
+              user={user}
+              onAuthRequired={() => setShowAuthModal(true)}
+            />
+          )}
+          
+          {currentView === 'detail' && selectedTournament && (
+            <TournamentDetail
+              tournament={selectedTournament}
+              user={user}
+              onBack={handleBackToTournaments}
+              onJoin={handleJoinTournament}
+              onUpdate={handleUpdateTournament}
+              onDelete={handleDeleteTournament}
+            />
+          )}
+          
+          {currentView === 'profile' && (
+            <UserProfile user={user} onProfileUpdate={handleProfileUpdate} />
+          )}
+        </main>
+
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
+
+        {showRegistration && selectedTournament && (
+          <PlayerRegistration
+            tournament={selectedTournament}
+            onRegister={handleRegisterTeam}
+            onClose={() => {
+              setShowRegistration(false);
+              setSelectedTournament(null);
+            }}
+          />
+        )}
+      </AuthGuard>
     </div>
   );
 }

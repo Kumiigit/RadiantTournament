@@ -49,6 +49,7 @@ export interface Tournament {
   description: string;
   game: string;
   format: 'single-elimination' | 'double-elimination' | 'round-robin';
+  stages: 1 | 2 | 3;
   maxTeams: number;
   teamSize: number;
   prizePool?: string;

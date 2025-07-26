@@ -92,12 +92,14 @@ export default function TournamentCard({ tournament, onJoin, onView }: Tournamen
             <span className="text-sm">{tournament.teams.length}/{tournament.maxTeams} teams</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-400">
-            <Trophy className="h-4 w-4" />
-            <span className="text-sm">{tournament.prizePool || 'No prize'}</span>
+            <div className="h-4 w-4 flex items-center justify-center">
+              <span className="text-xs font-bold">{tournament.stages}</span>
+            </div>
+            <span className="text-sm">{tournament.stages} Stage{tournament.stages > 1 ? 's' : ''}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-400">
-            <Calendar className="h-4 w-4" />
-            <span className="text-sm">{formatDate(tournament.startDate)}</span>
+            <Trophy className="h-4 w-4" />
+            <span className="text-sm">{tournament.prizePool || 'No prize'}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-400">
             <MapPin className="h-4 w-4" />

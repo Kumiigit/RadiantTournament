@@ -6,7 +6,7 @@ import { AuthUser } from '../types/auth';
 
 interface AuthModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onAuthSuccess: (user: AuthUser) => void;
 }
 
@@ -174,12 +174,14 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
             <h2 className="text-2xl font-bold text-white">
               {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Admin Login'}
             </h2>
-            <button 
-              onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors text-2xl"
-            >
-              <X className="h-6 w-6" />
-            </button>
+            {onClose && (
+              <button 
+                onClick={onClose}
+                className="text-gray-400 hover:text-white transition-colors text-2xl"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            )}
           </div>
         </div>
 

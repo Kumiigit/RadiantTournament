@@ -30,6 +30,7 @@ export interface DatabaseTournament {
   description: string;
   game: string;
   format: string;
+  stages: number;
   max_teams: number;
   team_size: number;
   prize_pool?: string;

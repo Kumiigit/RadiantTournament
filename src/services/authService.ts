@@ -214,9 +214,13 @@ export class AuthService {
       return null;
     }
     
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
     
-    if (!user) return null;
+    if (error || !user) {
+      // Clear any invalid session
+      await supabase.auth.signOut();
+      return null;
+    }
 
     const profile = await this.getProfile(user.id);
     
@@ -293,6 +297,14 @@ export class AuthService {
     }
     
     return supabase.auth.onAuthStateChange(async (event, session) => {
+      // Handle session expiry
+      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        if (!session) {
+          callback(null);
+          return;
+        }
+      }
+      
       if (session?.user) {
         const profile = await this.getProfile(session.user.id);
         callback({
@@ -304,5 +316,33 @@ export class AuthService {
         callback(null);
       }
     });
+  }
+  
+  static async refreshSession(): Promise<boolean> {
+    if (!supabase) {
+      return false;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.refreshSession();
+      return !error && !!data.session;
+    } catch (error) {
+      console.error('Session refresh failed:', error);
+      return false;
+    }
+  }
+  
+  static async validateSession(): Promise<boolean> {
+    if (!supabase) {
+      return false;
+    }
+    
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      return !error && !!user;
+    } catch (error) {
+      console.error('Session validation failed:', error);
+      return false;
+    }
   }
 }

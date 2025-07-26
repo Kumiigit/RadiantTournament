@@ -332,6 +332,10 @@ export default function TournamentDetail({ tournament, user, onBack, onJoin, onU
                       <span className="text-white capitalize">{tournament.format.replace('-', ' ')}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span>Stages:</span>
+                      <span className="text-white">{tournament.stages} Stage{tournament.stages > 1 ? 's' : ''}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span>Team Size:</span>
                       <span className="text-white">{tournament.teamSize} players</span>
                     </div>
